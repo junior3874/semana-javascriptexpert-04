@@ -13,8 +13,15 @@ export default class LobbyController extends GetEvents {
     console.log("lobby connection with", id);
 
     this.#updateLobbyRooms(socket, [...this.activeRoomns.values()]);
+
+    this.#activateEventProxy(socket);
   }
 
+  #activateEventProxy(socket) {
+    this.roomsListener.on(constants.event.LOBBY_UPDATED, (rooms) => {
+      this.#updateLobbyRooms(socket, rooms);
+    });
+  }
   #updateLobbyRooms(socket, activeRooms) {
     socket.emit(constants.event.LOBBY_UPDATED, activeRooms);
   }
