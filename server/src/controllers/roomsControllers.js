@@ -22,6 +22,38 @@ export default class RoomsController extends GetEvents {
     };
   }
 
+  speakAnswer(socket, { answer, user }) {
+    const currentUser = this.#users.get(user.id);
+    const updatedUser = new Attendee({
+      ...currentUser,
+      isSpeaker: answer,
+    });
+
+    this.#users.set(user.id, updatedUser);
+    const userId = user.id;
+    const roomId = user.roomId;
+    const room = this.rooms.get(roomId);
+
+    const userOnRoom = [...room.users.values()].find(({ id }) => id === userId);
+    room.users.delete(userOnRoom);
+    room.users.add(updatedUser);
+    this.rooms.set(roomId, room);
+
+    socket.emit(constants.event.UPGRADE_USER_PERMISSION, updatedUser);
+    // notifica a sala inteira para ligar para esse speaker
+
+    this.#notifyUserProfileUpgrade(socket, roomId, updatedUser);
+  }
+  speakRequest(socket) {
+    const userId = socket.id;
+    const user = this.#users.get(userId);
+    const roomId = user.roomId;
+
+    const owner = this.rooms.get(roomId)?.owner;
+
+    socket.to(owner.id).emit(constants.event.SPEAK_REQUEST, user);
+  }
+
   notifyRoomsSUbscribers(rooms) {
     const event = constants.event.LOBBY_UPDATED;
     this.roomsPubSub.emit(event, [...rooms.values()]);
