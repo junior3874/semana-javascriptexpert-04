@@ -11,7 +11,11 @@ const btnClipBoard = document.getElementById("btnClipBoard");
 const btnClap = document.getElementById("btnClap");
 const toggleImage = document.getElementById("toggleImage");
 const btnLeave = document.getElementById("btnLeave");
+
 export default class View {
+  static redirectToLogin() {
+    window.location = constants.pages.login;
+  }
   static updateUserImage({ img, username }) {
     imgUser.src = img;
     imgUser.al = username;
@@ -105,11 +109,13 @@ export default class View {
     };
   }
   static configureClapButton(command) {
-    btnClap.addEventListener("click", this._onClapClick(command));
+    btnClap.addEventListener("click", View._onClapClick(command));
   }
+
   static _redirectToLobby() {
     window.location = constants.pages.lobby;
   }
+
   static _toggleMicrophoneIcon() {
     const icon = btnMicrophone.firstElementChild;
     const classes = [...icon.classList];
@@ -123,15 +129,19 @@ export default class View {
       icon.classList.add(activeMicClass);
       return;
     }
+
     icon.classList.add(inactiveMicClass);
     icon.classList.remove(activeMicClass);
+    //
+    //
   }
-  static configureLeaveButtom() {
-    btnLeave.addEventListener("click", () => this._redirectToLobby());
+  static configureLeaveButton() {
+    btnLeave.addEventListener("click", () => View._redirectToLobby());
   }
-  static configureOnMicrophoneActivatedButton(command) {
+
+  static configureOnMicrophoneActivation(command) {
     btnMicrophone.addEventListener("click", () => {
-      this._toggleMicrophoneIcon();
+      View._toggleMicrophoneIcon();
       command();
     });
   }

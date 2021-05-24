@@ -1,3 +1,4 @@
+import { constants } from "../../_shared/constants.js";
 import Room from "./entities/room.js";
 import getTemplate from "./templates/lobbyItem.js";
 
@@ -11,6 +12,7 @@ const btnCreateRoomWithoutTopic = document.getElementById(
 );
 const txtTopic = document.getElementById("txtTopic");
 const imgUser = document.getElementById("imgUser");
+
 export default class View {
   static clearRoomList() {
     roomGrid.innerHTML = "";
@@ -18,7 +20,9 @@ export default class View {
   static generateRoomLink({ id, topic }) {
     return `./../room/index.html?id=${id}&topic=${topic}`;
   }
-
+  static redirectToLogin() {
+    window.location = constants.pages.login;
+  }
   static redirectToRoom(topic = "") {
     // https://stackoverflow.com/a/44078785/4087199
     const id =
